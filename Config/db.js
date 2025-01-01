@@ -10,3 +10,4 @@ try{
 
 }
 }
+export default db
