@@ -1,5 +1,5 @@
 import EmployeeModel from "../Models/EmployeeModel.js";
-import JWT from "jsonwebtoken"
+import jwt from "jsonwebtoken"
 
 //register employee
 export const registercontrol = async(req,res)=>{
@@ -47,42 +47,53 @@ const exisitingUser = await EmployeeModel.findOne({ email });
 }
 
 // login employee
- export const LoginControll=async (req,res)=>{
-    try {
-        const { email, password } = req.body;
-    //validation
-    if (!email || !password) {
-      return res.status(404).send({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-    //check user
-    const Employee = await EmployeeModel.findOne({ email });
-    if (!Employee) {
+export const loginController = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if the employee exists
+    const employee = await EmployeeModel.findOne({ email });
+    if (!employee) {
       return res.status(404).send({
         success: false,
         message: "Email is not registered",
       });
     }
-    const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "2h",
-      });
-      res.status(200).send({
-        success: true,
-        message: "login successfully",
-        user: {
-          _id: user._id,
-          email: user.email,
-          password:user.password,
-          role: user.role,
-        },
-        token,
-      });
-      } catch (err) {
-        res.status(500).json({ error: err.message });
-      }
- }
+
+    // Validate password
+    // const isPasswordValid = await bcrypt.compare(password, employee.password);
+    // if (!isPasswordValid) {
+    //   return res.status(401).send({
+    //     success: false,
+    //     message: "Invalid password",
+    //   });
+    // }
+
+    // Generate JWT token
+    const token = jwt.sign({ _id: employee._id, role: employee.role }, process.env.JWT_SECRET, {
+      expiresIn: "2h",
+    });
+
+    // Respond with employee data (excluding sensitive information)
+    res.status(200).send({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        _id: employee._id,
+        email: employee.email,
+        role: employee.role,
+      },
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Server error",
+      error: err.message,
+    });
+  }
+};
+
  // Get All Employees (Admin only)
 export const getAllEmployees = async (req, res) => {
     try {
