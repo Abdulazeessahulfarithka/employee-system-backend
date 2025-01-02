@@ -5,6 +5,8 @@ import cors from "cors"
 import employeeroute from "./Routes/EmployeeRoute.js"
 import taskRoutes from "./Routes/TaskRoute.js"
 import timeLogRoutes from "./Routes/TimelogRoute.js"
+const allowedOrigins = ['http://localhost:3000', 'https://employee-system-backend-1-pie3.onrender.com'];
+
 
 dotenv.config()
 
@@ -20,8 +22,17 @@ db()
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
-    origin:"*"
-}))
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
+    credentials: true // Allow cookies if needed
+  }));
+  
 
 // Default route
 app.get('/', (req, res) => {
