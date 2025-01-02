@@ -14,7 +14,12 @@ const EmployeeSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    role: { type: String, enum: ['employee', 'admin'], default: 'employee' },
+    role: { 
+  type: String, 
+  enum: ['User', 'Admin', 'Editor'], 
+  default: 'User' 
+},
+
     tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
     createdAt: { type: Date, default: Date.now }
 })

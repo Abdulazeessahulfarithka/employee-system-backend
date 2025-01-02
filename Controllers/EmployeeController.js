@@ -1,50 +1,69 @@
 import EmployeeModel from "../Models/EmployeeModel.js";
 import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
 
 //register employee
-export const registercontrol = async(req,res)=>{
-    try{
-  const {name,email,password,role}=req.body
- 
-  if(!name){
-    return res.send({message:"name is required"})
-  }
-  if(!email){
-    return res.send({message:"email is required"})
-  }
-  if(!password){
-    return res.send({message:"password is required"})
-  }
-  if(!role){
-    return res.send({message:"role is required"})
-  }
-// check user
-const exisitingUser = await EmployeeModel.findOne({ email });
-    //exisiting user
-    if (exisitingUser) {
-      return res.status(200).send({
-        success: true,
-        message: "Already Register please login",
+
+export const registercontrol = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required',
       });
     }
 
-    const Employee = await new EmployeeModel({
-        name,
-        email,
-        password,
-        role
-      }).save();
-  
-      res.status(201).send({
-        success: true,
-        message: "Employee Register Successfully",
-        Employee,
+    // Validate role
+    const allowedRoles = ['User', 'Admin', 'Editor'];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid role selected',
       });
-    }catch(error){
-        console.log("error")
     }
 
-}
+    // Check if the user already exists
+    const existingUser = await EmployeeModel.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'Email is already registered. Please login.',
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save new employee
+    const employee = await new EmployeeModel({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+    }).save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Employee registered successfully',
+      employee: {
+        id: employee._id,
+        name: employee.name,
+        email: employee.email,
+        role: employee.role,
+      },
+    });
+  } catch (error) {
+    console.error('Error during registration:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error. Please try again later.',
+    });
+  }
+};
+
 
 // login employee
 export const loginController = async (req, res) => {
