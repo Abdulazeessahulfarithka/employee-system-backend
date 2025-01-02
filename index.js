@@ -2,6 +2,8 @@ import express from "express";
 import * as dotenv from "dotenv"
 import db from "./Config/db.js"
 import employeeroute from "./Routes/EmployeeRoute.js"
+import taskRoutes from "./Routes/TaskRoute.js"
+import timeLogRoutes from "./Routes/TimelogRoute.js"
 
 dotenv.config()
 
@@ -24,6 +26,8 @@ app.get('/', (req, res) => {
 
 //routes
 app.use("/api/user",employeeroute)
+app.use("/api/tasks", taskRoutes);
+app.use("/api/time-logs", timeLogRoutes);
 
 // Start the server
 app.listen(PORT, () => {

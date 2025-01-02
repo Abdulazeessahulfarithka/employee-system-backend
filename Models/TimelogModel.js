@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const TimeLogSchema = new mongoose.Schema({
   employee: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
@@ -16,4 +16,4 @@ TimeLogSchema.pre('save', function (next) {
   next();
 });
 
-module.exports = mongoose.model('TimeLog', TimeLogSchema);
+export default mongoose.model("TimeLog",TimeLogSchema)
