@@ -1,6 +1,7 @@
 import express from "express";
 import * as dotenv from "dotenv"
 import db from "./Config/db.js"
+import cors from "cors"
 import employeeroute from "./Routes/EmployeeRoute.js"
 import taskRoutes from "./Routes/TaskRoute.js"
 import timeLogRoutes from "./Routes/TimelogRoute.js"
@@ -18,6 +19,9 @@ db()
 // Middleware to parse JSON requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors({
+    origin:"*"
+}))
 
 // Default route
 app.get('/', (req, res) => {
