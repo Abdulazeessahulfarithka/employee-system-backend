@@ -9,21 +9,14 @@ export const registercontrol = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     // Validate required fields
-    if (!name || !email || !password || !role) {
+    if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
         message: 'All fields are required',
       });
     }
 
-    // Validate role
-    const allowedRoles = ['User', 'Admin', 'Editor'];
-    if (!allowedRoles.includes(role)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid role selected',
-      });
-    }
+  
 
     // Check if the user already exists
     const existingUser = await EmployeeModel.findOne({ email });
