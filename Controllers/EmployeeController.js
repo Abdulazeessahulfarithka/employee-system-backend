@@ -6,7 +6,7 @@ import bcrypt from "bcrypt"
 
 export const registercontrol = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password} = req.body;
 
     // Validate required fields
     if (!name || !email || !password) {
@@ -15,8 +15,6 @@ export const registercontrol = async (req, res) => {
         message: 'All fields are required',
       });
     }
-
-  
 
     // Check if the user already exists
     const existingUser = await EmployeeModel.findOne({ email });
@@ -35,7 +33,6 @@ export const registercontrol = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role,
     }).save();
 
     res.status(201).json({
@@ -45,7 +42,6 @@ export const registercontrol = async (req, res) => {
         id: employee._id,
         name: employee.name,
         email: employee.email,
-        role: employee.role,
       },
     });
   } catch (error) {
@@ -73,19 +69,19 @@ export const loginController = async (req, res) => {
     }
 
     // Validate password
-    // const isPasswordValid = await bcrypt.compare(password, employee.password);
-    // if (!isPasswordValid) {
-    //   return res.status(401).send({
-    //     success: false,
-    //     message: "Invalid password",
-    //   });
-    // }
+    const isPasswordValid = await bcrypt.compare(password, employee.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({
+        success: false,
+        message: "Invalid password",
+      });
+    }
 
     // Generate JWT token
     const token = jwt.sign({ _id: employee._id, role: employee.role }, process.env.JWT_SECRET, {
       expiresIn: "2h",
     });
-
+console.log(token)
     // Respond with employee data (excluding sensitive information)
     res.status(200).send({
       success: true,

@@ -8,19 +8,14 @@ const EmployeeSchema = new mongoose.Schema({
     },
     email:{
         type:String,
+        unique:true,
         required:true
     },
     password:{
         type:String,
         required:true
     },
-    role: { 
-  type: String, 
-  enum: ['User', 'Admin', 'Editor'], 
-  default: 'User' 
-},
-
-    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
+   role: { type: String, enum: ["employee", "admin"], default: "employee" },
     createdAt: { type: Date, default: Date.now }
 })
 

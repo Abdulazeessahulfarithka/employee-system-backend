@@ -1,31 +1,47 @@
 import TaskModel from "../Models/TaskModel.js";
 
-export const createTask =async(req,res)=>{
-    try{
-    const {title,description,assignedTo,status,deadline}=req.body
 
-    const task = new TaskModel({
-        title,
-        description,
-        assignedTo,
-        status: status || "To-Do",
-        deadline,
+export const createTask = async (req, res) => {
+  try {
+    const { title, description, assignedTo, status, deadline } = req.body;
+
+    // Validate required fields
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        message: "Task title is required",
       });
-  
-      await task.save();
-  
-      res.status(201).send({
-        success: true,
-        message: "Task created successfully",
-        task,
-      });
-   
-
-    }catch(error){
-        console.log("error")
-
     }
-}
+    
+    // Create a new task
+    const task = new TaskModel({
+      title,
+      description,
+      assignedTo,
+      status: status || "To-Do", // Default status if not provided
+      deadline,
+    });
+
+    // Save the task to the database
+    await task.save();
+
+    // Respond with success
+    res.status(201).json({
+      success: true,
+      message: "Task created successfully",
+      task,
+    });
+  } catch (error) {
+    console.error("Error creating task:", error); // Log the error for debugging
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to create task",
+      error: error.message, // Include error details for debugging
+    });
+  }
+};
+
 // Update a task
 export const updateTask = async (req, res) => {
     try {

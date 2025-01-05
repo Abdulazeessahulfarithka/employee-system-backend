@@ -11,7 +11,7 @@ import { verifyToken, isAdmin } from "../Middleware/authmiddleware.js";
 const router = express.Router();
 
 // Create a new task (Admin only)
-router.post("/", verifyToken, isAdmin, createTask);
+router.post("/",verifyToken,createTask);
 
 // Update a task by ID (Admin only)
 router.put("/:id", verifyToken, isAdmin, updateTask);
