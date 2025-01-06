@@ -14,7 +14,7 @@ router.post("/login",loginController)
 //getall
 router.get("/getallemployee",getAllEmployees)
 
-router.get("/user-auth",verifyToken,(res,req)=>{
+router.get("/user-auth",(res,req)=>{
     res.status(200).send({ok:true})
 
 })

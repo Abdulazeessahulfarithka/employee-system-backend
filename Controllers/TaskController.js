@@ -136,3 +136,17 @@ export const updateTask = async (req, res) => {
       });
     }
   };
+// In TaskController.js
+export const getTaskById = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const task = await TaskModel.findById(taskId); // Replace TaskModel with your Mongoose model
+    if (!task) {
+      return res.status(404).json({ success: false, message: "Task not found" });
+    }
+    res.status(200).json({ success: true, task });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
