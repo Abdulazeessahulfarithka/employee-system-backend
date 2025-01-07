@@ -22,7 +22,7 @@ router.delete("/:id", verifyToken, isAdmin, deleteTask);
 
 // Get all tasks (Admin only)
 router.get("/", verifyToken, isAdmin, getAllTasks);
-router.get("/:id", verifyToken, getTaskById);
+router.get("/:id",verifyToken,getTaskById);
 
 // Get tasks assigned to a specific employee
 router.get("/employee/:employeeId", verifyToken, getTasksByEmployee);

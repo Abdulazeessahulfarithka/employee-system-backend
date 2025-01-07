@@ -140,13 +140,23 @@ export const updateTask = async (req, res) => {
 export const getTaskById = async (req, res) => {
   try {
     const taskId = req.params.id;
-    const task = await TaskModel.findById(taskId); // Replace TaskModel with your Mongoose model
+
+    // Validate the taskId
+    if (!taskId) {
+      return res.status(400).json({ success: false, message: "Task ID is required" });
+    }
+
+    // Fetch the task by its ID
+    const task = await TaskModel.findById(taskId).populate("assignedTo"); // Populate assignedTo if needed
     if (!task) {
       return res.status(404).json({ success: false, message: "Task not found" });
     }
+
     res.status(200).json({ success: true, task });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server error", error });
+    console.error("Error fetching task by ID:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
+
 
