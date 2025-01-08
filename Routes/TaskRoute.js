@@ -21,7 +21,7 @@ router.put("/:id", verifyToken, isAdmin, updateTask);
 router.delete("/:id", verifyToken, isAdmin, deleteTask);
 
 // Get all tasks (Admin only)
-router.get("/", verifyToken, isAdmin, getAllTasks);
+router.get("/", verifyToken,  getAllTasks);
 router.get("/:id",verifyToken,getTaskById);
 
 // Get tasks assigned to a specific employee

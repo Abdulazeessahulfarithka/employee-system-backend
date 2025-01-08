@@ -105,7 +105,7 @@ console.log(token)
  // Get All Employees (Admin only)
 export const getAllEmployees = async (req, res) => {
     try {
-      const employees = await EmployeeModel.find().populate('tasks');
+      const employees = await EmployeeModel.find();
       res.status(200).json(employees);
     } catch (err) {
       res.status(500).json({ error: err.message });
