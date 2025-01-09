@@ -5,7 +5,7 @@ import cors from "cors"
 import employeeroute from "./Routes/EmployeeRoute.js"
 import taskRoutes from "./Routes/TaskRoute.js"
 import timeLogRoutes from "./Routes/TimelogRoute.js"
-const allowedOrigins = ['http://localhost:8000', 'https://employee-system-backend-1-pie3.onrender.com'];
+const allowedOrigins = ['http://localhost:3000', 'https://employee-system-backend-1-pie3.onrender.com'];
 
 
 dotenv.config()
