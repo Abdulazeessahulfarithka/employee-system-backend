@@ -145,15 +145,15 @@ export const updateTask = async (req, res) => {
   //getbyid
 export const getTaskById = async (req, res) => {
   try {
-    const Id = req.params.id;
-    // console.log("Task ID from request:", taskId);
+    const taskId = req.params.id;
+    console.log("Task ID from request:", taskId);
 
-    if (!mongoose.Types.ObjectId.isValid(Id)) {
+    if (!mongoose.Types.ObjectId.isValid(taskId)) {
       return res.status(400).json({ success: false, message: "Invalid Task ID format" });
     }
-    // console.log(mongoose.Types.ObjectId)
+    console.log(mongoose.Types.ObjectId)
     // Fetch the task
-    const task = await TaskModel.findById(Id);
+    const task = await TaskModel.findById(taskId);
     console.log("Task fetched from database:", task);
 
     if (!task) {
