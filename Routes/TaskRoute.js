@@ -26,6 +26,6 @@ router.get("/:slug", verifyToken, getTaskById); // The :id is the dynamic parame
 
 
 // Get tasks assigned to a specific employee
-router.get("/employee/:employeeId",getTasksByEmployee);
+router.get("/employee/:employeeId", verifyToken, getTasksByEmployee);
 
 export default router;
