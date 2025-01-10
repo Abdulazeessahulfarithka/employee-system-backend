@@ -22,7 +22,7 @@ router.delete("/:id", verifyToken, isAdmin, deleteTask);
 
 // Get all tasks (Admin only)
 router.get("/", verifyToken,  getAllTasks);
-router.get("/:slug", verifyToken, getTaskById); // The :id is the dynamic parameter
+router.get("/:employeeId", verifyToken, getTaskById); // The :id is the dynamic parameter
 
 
 // Get tasks assigned to a specific employee
