@@ -153,7 +153,7 @@ export const getTaskById = async (req, res) => {
     // }
     // console.log(mongoose.Types.ObjectId)
     // Fetch the task
-    const task = await TaskModel.findById({assignedTo: employeeId});
+    const task = await TaskModel.findById({assignedTo: taskId});
     console.log("Task fetched from database:", task);
 
     if (!task) {
