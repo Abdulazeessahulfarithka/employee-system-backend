@@ -145,7 +145,7 @@ export const updateTask = async (req, res) => {
   //getbyid
 export const getTaskById = async (req, res) => {
   try {
-    const taskId = req.params.id;
+    const {taskId} = req.params.id;
     console.log("Task ID from request:", taskId);
 
     // if (!mongoose.Types.ObjectId.isValid(taskId)) {
