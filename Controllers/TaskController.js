@@ -143,35 +143,29 @@ export const updateTask = async (req, res) => {
     }
   };
   //getbyid
+
   export const getTaskById = async (req, res) => {
     try {
       const taskId = req.params.id;
-      console.log("Task ID from request:", taskId);
+      console.log("Received taskId:", taskId);
   
       // Validate taskId
-      if (!mongoose.ObjectId.isValid(taskId)) {
+      if (!taskId || !mongoose.Types.ObjectId.isValid(taskId)) {
         return res.status(400).json({ success: false, message: "Invalid taskId format" });
       }
   
-      // Fetch the task using taskId directly
+      // Fetch the task
       const task = await TaskModel.findById(taskId);
-      console.log("Task fetched from database:", task);
+      console.log("Fetched Task:", task);
   
       if (!task) {
         return res.status(404).json({ success: false, message: "Task not found" });
       }
   
-      // Convert MongoDB BSON types to JSON-friendly types
-      const taskData = {
-        ...task.toObject(), // Convert the task document to a plain object
-        deadline: task.deadline ? task.deadline.toISOString() : null,
-        _id: task._id.toString(),
-        assignedTo: task.assignedTo ? task.assignedTo.toString() : null,
-      };
-  
-      res.status(200).json({ success: true, task: taskData });
+      // Return task
+      res.status(200).json({ success: true, task });
     } catch (error) {
-      console.error("Error fetching task by ID:", error);
+      console.error("Error fetching task:", error);
       res.status(500).json({ success: false, message: "Server error", error: error.message });
     }
   };
