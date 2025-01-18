@@ -149,7 +149,7 @@ export const updateTask = async (req, res) => {
       console.log("Task ID from request:", taskId);
   
       // Validate taskId
-      if (!mongoose.Types.ObjectId.isValid(taskId)) {
+      if (!mongoose.ObjectId.isValid(taskId)) {
         return res.status(400).json({ success: false, message: "Invalid taskId format" });
       }
   
