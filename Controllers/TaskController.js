@@ -150,8 +150,14 @@ export const getTaskById = async (req, res) => {
   try {
     const taskId = req.params.id;
     console.log("Received taskId:", taskId);
+
+    // Validate taskId using mongoose.Types.ObjectId.isValid
+    if (!taskId || !mongoose.Types.ObjectId.isValid(taskId)) {
+      return res.status(400).json({ success: false, message: "Invalid taskId format" });
+    }
+
     // Fetch the task
-    const task = await TaskModel.findById(taskId);
+    const task = await TaskModel.findById(req.params.id);
     console.log("Fetched Task:", task);
 
     if (!task) {
