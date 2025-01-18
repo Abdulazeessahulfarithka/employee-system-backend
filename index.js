@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 app.use("/api/user",employeeroute)
 app.use("/api/tasks", taskRoutes);
 app.use("/api/time-logs", timeLogRoutes);
-
+  
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
