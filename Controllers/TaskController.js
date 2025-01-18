@@ -162,7 +162,7 @@ export const getTaskById = async (req, res) => {
 
     // Convert MongoDB BSON types to JSON-friendly types
     task.deadline = task.deadline ? task.deadline.toISOString() : null; // Convert Date
-    task._id = task._id.toString(); // Convert ObjectId to string
+    task._id = task._id.toString(); // Convert ObjectId to string0
     if (task.assignedTo) {
       task.assignedTo = task.assignedTo.toString(); // Convert assignedTo ObjectId to string
     }
