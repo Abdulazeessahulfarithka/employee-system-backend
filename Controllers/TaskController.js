@@ -144,31 +144,34 @@ export const updateTask = async (req, res) => {
   };
   //getbyid
 
-  export const getTaskById = async (req, res) => {
-    try {
-      const taskId = req.params.id;
-      console.log("Received taskId:", taskId);
   
-      // Validate taskId
-      if (!taskId || !mongoose.Types.ObjectId.isValid(taskId)) {
-        return res.status(400).json({ success: false, message: "Invalid taskId format" });
-      }
-  
-      // Fetch the task
-      const task = await TaskModel.findById(taskId);
-      console.log("Fetched Task:", task);
-  
-      if (!task) {
-        return res.status(404).json({ success: false, message: "Task not found" });
-      }
-  
-      // Return task
-      res.status(200).json({ success: true, task });
-    } catch (error) {
-      console.error("Error fetching task:", error);
-      res.status(500).json({ success: false, message: "Server error", error: error.message });
+
+export const getTaskById = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    console.log("Received taskId:", taskId);
+
+    // Validate taskId using mongoose.Types.ObjectId.isValid
+    if (!taskId || !mongoose.Types.ObjectId.isValid(taskId)) {
+      return res.status(400).json({ success: false, message: "Invalid taskId format" });
     }
-  };
+
+    // Fetch the task
+    const task = await TaskModel.findById(taskId);
+    console.log("Fetched Task:", task);
+
+    if (!task) {
+      return res.status(404).json({ success: false, message: "Task not found" });
+    }
+
+    // Return the task
+    res.status(200).json({ success: true, task });
+  } catch (error) {
+    console.error("Error fetching task:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
   
 
   
