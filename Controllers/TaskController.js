@@ -2,6 +2,7 @@ import TaskModel from "../Models/TaskModel.js";
 import mongoose from "mongoose";
 
 // Create a new task
+
 export const createTask = async (req, res) => {
   try {
     const { title, description, assignedTo, status, deadline, project } = req.body;
@@ -165,17 +166,17 @@ export const getTasksByEmployee = async (req, res) => {
 // Get task by ID
 export const getTaskById = async (req, res) => {
   try {
-    const { taskId } = req.params;
+    const { id } = req.params;
 
     // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(taskId)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
         message: "Invalid task ID",
       });
     }
 
-    const task = await TaskModel.findById(taskId);
+    const task = await TaskModel.findById(id);
 
     if (!task) {
       return res.status(404).json({
