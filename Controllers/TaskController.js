@@ -148,7 +148,7 @@ export const updateTask = async (req, res) => {
 
   export const getTaskById = async (req, res) => {
   try{
-     const task =await TaskModel.findOne({ slug:req.params.slug})
+     const task =await TaskModel.findById({ slug:req.params.slug})
      res.status(200).send({
       success: true,
       message: "Get SIngle task SUccessfully",
