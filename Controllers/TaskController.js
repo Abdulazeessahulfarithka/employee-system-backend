@@ -147,22 +147,33 @@ export const updateTask = async (req, res) => {
   
 
   export const getTaskById = async (req, res) => {
-  try{
-     const task =await TaskModel.findById({ slug:req.params.slug})
-     res.status(200).send({
-      success: true,
-      message: "Get SIngle task SUccessfully",
-      task,
-     })
-  }catch(error){
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      error,
-      message: "Error While getting Single Category",
-    });
-  }
-  }
+    try {
+      // Query by slug or any other identifier
+      const task = await TaskModel.findOne({ slug: req.params.slug });
+  
+      // Check if task exists
+      if (!task) {
+        return res.status(404).send({
+          success: false,
+          message: "Task not found",
+        });
+      }
+  
+      res.status(200).send({
+        success: true,
+        message: "Get Single Task Successfully",
+        task,
+      });
+    } catch (error) {
+      console.log("Error while fetching single task:", error);
+      res.status(500).send({
+        success: false,
+        error: error.message,
+        message: "Error While Getting Single Task",
+      });
+    }
+  };
+  
       
   
   
