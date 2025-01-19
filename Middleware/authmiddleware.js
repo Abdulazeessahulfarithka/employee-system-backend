@@ -1,45 +1,49 @@
 import JWT from "jsonwebtoken";
 import EmployeeModel from "../Models/EmployeeModel.js";
 
-// Verify JWT Token
+// Middleware to verify JWT token
 export const verifyToken = async (req, res, next) => {
-  const authHeader = req.headers.authorization || req.headers.authorization
+  try {
+    const authHeader = req.headers.authorization;
 
-  if (authHeader && authHeader.startsWith("Bearer")) {
-    const token = authHeader.split(" ") [1];
-// console.log(token)
-    if (!token) {
+    // Check if Authorization header is present and well-formed
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "No token provided",
+        message: "Authorization header missing or malformed",
       });
     }
 
-    try {
-      const decoded = JWT.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;
-      // console.log("the decoded user",req.user)
-      next();
-    } catch (error) {
-      console.error("JWT verification failed:", error.message);
-      return res.status(401).json({
-        success: false,
-        message: "Invalid or expired token",
-      });
-    }
-  } else {
-    return res.status(401).json({
+    // Extract token
+    const token = authHeader.split(" ")[1];
+
+    // Verify token
+    const decoded = JWT.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Add user data to the request object for downstream use
+    next();
+  } catch (error) {
+    console.error("JWT verification failed:", error.message);
+    res.status(401).json({
       success: false,
-      message: "Authorization header missing or malformed",
+      message: "Invalid or expired token",
     });
   }
 };
 
-// Check if the user is an Admin
+// Middleware to check if the user is an Admin
 export const isAdmin = async (req, res, next) => {
   try {
+    // Ensure `req.user` is populated by the `verifyToken` middleware
+    if (!req.user || !req.user._id) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized: User data missing",
+      });
+    }
+
+    // Find user in the database
     const user = await EmployeeModel.findById(req.user._id);
-   
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -47,20 +51,20 @@ export const isAdmin = async (req, res, next) => {
       });
     }
 
+    // Check user role
     if (user.role !== "admin") {
       return res.status(403).json({
         success: false,
-        message: "Unauthorized Access",
+        message: "Unauthorized: Admin access required",
       });
     }
 
-    next();
+    next(); // User is authorized
   } catch (error) {
-    // console.error("Error in admin middleware:", error);
+    console.error("Error in admin middleware:", error.message);
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
-      error,
     });
   }
 };

@@ -1,31 +1,27 @@
 import TaskModel from "../Models/TaskModel.js";
 import mongoose from "mongoose";
 
+// Create a new task
 export const createTask = async (req, res) => {
   try {
-    const { title, description, assignedTo, status, deadline } = req.body;
+    const { title, description, assignedTo, status, deadline, project } = req.body;
 
     // Validate required fields
-    if (!title) {
+    if (!title || !description || !assignedTo) {
       return res.status(400).json({
         success: false,
-        message: "Task title is required",
+        message: "Title, description, and assignedTo are required fields",
       });
     }
-    if (!description) {
-      return res.status(400).json({
-        success: false,
-        message: "Task description is required",
-      });
-    }
-    
+
     // Create a new task
     const task = new TaskModel({
       title,
       description,
       assignedTo,
-      status: status || "To-Do", // Default status if not provided
+      status: status || "To-Do", // Default to "To-Do" if not provided
       deadline,
+      project,
     });
 
     // Save the task to the database
@@ -38,147 +34,167 @@ export const createTask = async (req, res) => {
       task,
     });
   } catch (error) {
-    console.error("Error creating task:", error); // Log the error for debugging
+    console.error("Error creating task:", error);
 
     res.status(500).json({
       success: false,
       message: "Failed to create task",
-      error: error.message, // Include error details for debugging
+      error: error.message,
     });
   }
 };
 
 // Update a task
 export const updateTask = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const updates = req.body;
-  
-      const updatedTask = await TaskModel.findByIdAndUpdate(id, updates, {
-        new: true,
-      });
-  
-      if (!updatedTask) {
-        return res.status(404).send({
-          success: false,
-          message: "Task not found",
-        });
-      }
-  
-      res.status(200).send({
-        success: true,
-        message: "Task updated successfully",
-        task: updatedTask,
-      });
-    } catch (err) {
-      res.status(500).send({
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
         success: false,
-        message: "Error updating task",
-        error: err.message,
+        message: "Invalid task ID",
       });
     }
-  };
-  
-  // Delete a task
-  export const deleteTask = async (req, res) => {
-    try {
-      const { id } = req.params;
-  
-      const deletedTask = await TaskModel.findByIdAndDelete(id);
-  
-      if (!deletedTask) {
-        return res.status(404).send({
-          success: false,
-          message: "Task not found",
-        });
-      }
-  
-      res.status(200).send({
-        success: true,
-        message: "Task deleted successfully",
-      });
-    } catch (err) {
-      res.status(500).send({
+
+    const updatedTask = await TaskModel.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+
+    if (!updatedTask) {
+      return res.status(404).json({
         success: false,
-        message: "Error deleting task",
-        error: err.message,
+        message: "Task not found",
       });
     }
-  };
-  
-  // Get all tasks
-  export const getAllTasks = async (req, res) => {
-    try {
-      const tasks = await TaskModel.find();
-      res.status(200).send({
-        success: true,
-        tasks,
-      });
-    } catch (err) {
-      res.status(500).send({
+
+    res.status(200).json({
+      success: true,
+      message: "Task updated successfully",
+      task: updatedTask,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating task",
+      error: error.message,
+    });
+  }
+};
+
+// Delete a task
+export const deleteTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
         success: false,
-        message: "Error fetching tasks",
-        error: err.message,
+        message: "Invalid task ID",
       });
     }
-  };
-  
-  // Get tasks by assigned employee
-  export const getTasksByEmployee = async (req, res) => {
-    try {
-      const { employeeId } = req.params.id;
-  
-      const tasks = await TaskModel.find({ assignedTo: employeeId });
-  
-      res.status(200).send({
-        success: true,
-        tasks,
-      });
-    } catch (err) {
-      res.status(500).send({
+
+    const deletedTask = await TaskModel.findByIdAndDelete(id);
+
+    if (!deletedTask) {
+      return res.status(404).json({
         success: false,
-        message: "Error fetching tasks for employee",
-        error: err.message,
+        message: "Task not found",
       });
     }
-  };
-  //getbyid
 
-  
+    res.status(200).json({
+      success: true,
+      message: "Task deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error deleting task",
+      error: error.message,
+    });
+  }
+};
 
-  export const getTaskById = async (req, res) => {
-    try {
-      // Query by slug or any other identifier
-      const task = await TaskModel.findOne({ slug: req.params.slug });
-  
-      // Check if task exists
-      if (!task) {
-        return res.status(404).send({
-          success: false,
-          message: "Task not found",
-        });
-      }
-  
-      res.status(200).send({
-        success: true,
-        message: "Get Single Task Successfully",
-        task,
-      });
-    } catch (error) {
-      console.log("Error while fetching single task:", error);
-      res.status(500).send({
+// Get all tasks
+export const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await TaskModel.find();
+    res.status(200).json({
+      success: true,
+      tasks,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching tasks",
+      error: error.message,
+    });
+  }
+};
+
+// Get tasks by assigned employee
+export const getTasksByEmployee = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(employeeId)) {
+      return res.status(400).json({
         success: false,
-        error: error.message,
-        message: "Error While Getting Single Task",
+        message: "Invalid employee ID",
       });
     }
-  };
-  
-      
-  
-  
 
-  
+    const tasks = await TaskModel.find({ assignedTo: employeeId });
 
+    res.status(200).json({
+      success: true,
+      tasks,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching tasks for employee",
+      error: error.message,
+    });
+  }
+};
 
+// Get task by ID
+export const getTaskById = async (req, res) => {
+  try {
+    const { taskId } = req.params;
 
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(taskId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid task ID",
+      });
+    }
+
+    const task = await TaskModel.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Fetched task successfully",
+      task,
+    });
+  } catch (error) {
+    console.error("Error while fetching task:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Error while fetching task",
+      error: error.message,
+    });
+  }
+};
