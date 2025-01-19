@@ -147,33 +147,23 @@ export const updateTask = async (req, res) => {
   
 
   export const getTaskById = async (req, res) => {
-    try {
-      const taskId = req.params.id;
-  
-      // Validate the taskId
-      if (!mongoose.Types.ObjectId.isValid(taskId)) {
-        return res.status(400).json({ success: false, message: "Invalid taskId format" });
-      }
-  
-      // Fetch the task
-      const task = await TaskModel.findById(taskId);
-  
-      if (!task) {
-        return res.status(404).json({ success: false, message: "Task not found" });
-      }
-  
-      // Convert MongoDB document to JSON-friendly object and include the ID
-      const taskData = {
-        ...task.toObject(),
-        id: task._id.toString(), // Include the ID explicitly
-      };
-  
-      res.status(200).json({ success: true, task: taskData });
-    } catch (error) {
-      console.error("Error fetching task:", error);
-      res.status(500).json({ success: false, message: "Server error", error: error.message });
-    }
-  };
+  try{
+     const task =await TaskModel.findOne({ slug:req.params.slug})
+     res.status(200).send({
+      success: true,
+      message: "Get SIngle task SUccessfully",
+      task,
+     })
+  }catch(error){
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error While getting Single Category",
+    });
+  }
+  }
+      
   
   
 
